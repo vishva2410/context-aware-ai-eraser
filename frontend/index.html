@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context-Aware AI Eraser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 60px 20px;
+            color: #1d1d1f;
+        }
+        .container {
+            max-width: 980px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 56px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #1d1d1f;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 28px;
+            font-weight: 400;
+            color: #6e6e73;
+            text-align: center;
+            margin-bottom: 60px;
+            line-height: 1.4;
+        }
+        form {
+            max-width: 692px;
+            margin: 0 auto;
+        }
+        .section {
+            margin-bottom: 48px;
+        }
+        .section-title {
+            font-size: 21px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 16px;
+            letter-spacing: -0.2px;
+        }
+        .upload-area {
+            border: 1px solid #d2d2d7;
+            background: #fbfbfd;
+            padding: 80px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .upload-area:hover {
+            border-color: #86868b;
+            background: #f5f5f7;
+        }
+        .upload-text {
+            font-size: 17px;
+            color: #1d1d1f;
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+        .upload-subtext {
+            font-size: 14px;
+            color: #86868b;
+        }
+        input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        select {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #d2d2d7;
+            background: #ffffff;
+            font-size: 17px;
+            color: #1d1d1f;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='14' height='8' viewBox='0 0 14 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M1 1L7 7L13 1' stroke='%23000000' stroke-width='2' stroke-linecap='round'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 48px;
+        }
+        select:hover {
+            border-color: #86868b;
+        }
+        select:focus {
+            outline: none;
+            border-color: #0071e3;
+        }
+        option {
+            padding: 12px;
+        }
+        .checkbox-group {
+            background: #fbfbfd;
+            border: 1px solid #d2d2d7;
+            padding: 32px;
+        }
+        .checkbox-list {
+            display: grid;
+            gap: 16px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: #ffffff;
+            border: 1px solid #d2d2d7;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .checkbox-item:hover {
+            background: #f5f5f7;
+            border-color: #86868b;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 16px;
+            cursor: pointer;
+            accent-color: #000000;
+        }
+        .checkbox-item label {
+            font-size: 17px;
+            color: #1d1d1f;
+            cursor: pointer;
+            font-weight: 400;
+        }
+        button {
+            width: 100%;
+            padding: 18px;
+            font-size: 17px;
+            font-weight: 400;
+            color: #ffffff;
+            background: #0071e3;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 32px;
+        }
+        button:hover {
+            background: #0077ed;
+        }
+        button:active {
+            background: #006edb;
+        }
+        .info-section {
+            max-width: 692px;
+            margin: 48px auto 0;
+            padding: 32px;
+            background: #f5f5f7;
+            border: 1px solid #d2d2d7;
+        }
+        .info-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 12px;
+        }
+        .info-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #6e6e73;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 40px;
+            }
+            .subtitle {
+                font-size: 21px;
+            }
+            .upload-area {
+                padding: 60px 24px;
+            }
+            .container {
+                padding: 0 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>AI Eraser</h1>
+    <div class="subtitle">Intelligent privacy protection for your images.</div>
+    
+    <form action="/process" method="POST" enctype="multipart/form-data">
+        <div class="section">
+            <div class="section-title">Upload your image</div>
+            <div class="upload-area">
+                <div class="upload-text">Choose a file</div>
+                <div class="upload-subtext">JPEG, PNG, or WebP up to 10MB</div>
+                <input type="file" name="image" accept="image/*" required>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Select context</div>
+            <select id="contextSelect" name="context" required>
+                <option value="public">Public — Remove sensitive information</option>
+                <option value="private">Private — Keep all details</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Choose elements to remove</div>
+            <div class="checkbox-group">
+                <div class="checkbox-list">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="faces" name="elements" value="faces" checked>
+                        <label for="faces">Faces</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="plates" name="elements" value="plates">
+                        <label for="plates">License plates</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="ids" name="elements" value="ids">
+                        <label for="ids">ID cards</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="text" name="elements" value="text">
+                        <label for="text">Text and documents</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit">Process image</button>
+    </form>
+
+    <div class="info-section">
+        <div class="info-title">How it works</div>
+        <div class="info-text">Upload an image, select the privacy context, and choose which elements to remove. Our AI intelligently identifies and removes selected sensitive information from your image while preserving the overall composition.</div>
+    </div>
+</div>
+</body>
+</html>
