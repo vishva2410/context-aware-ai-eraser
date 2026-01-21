@@ -13,9 +13,9 @@ class FaceDetector:
             for box in results[0].boxes:
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 detections.append({
-                    "type": "face",
+                    "label": "face",
                     "bbox": [x1, y1, x2, y2],
-                    "confidence": float(box.conf[0])
+                    "score": float(box.conf[0])
                 })
 
         return detections
