@@ -1,64 +1,122 @@
+/**
+ * Context-Aware AI Eraser
+ * Frontend JavaScript Controller
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
+    // ========================================
+    // DOM Elements
+    // ========================================
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
     const processBtn = document.getElementById('process-btn');
+    const downloadBtn = document.getElementById('download-btn');
     const originalPreview = document.getElementById('original-preview');
     const processedPreview = document.getElementById('processed-preview');
     const resultsSection = document.getElementById('results-section');
     const loader = document.getElementById('loader');
+    const processStatus = document.getElementById('process-status');
 
-    // Toggle Logic
+    // Context Toggle Elements
     const publicRadio = document.getElementById('public');
     const privateRadio = document.getElementById('private');
     const publicDesc = document.getElementById('public-desc');
     const privateDesc = document.getElementById('private-desc');
 
+    // State
     let currentFile = null;
+    let processedImageUrl = null;
 
-    // --- Drag & Drop ---
+    // ========================================
+    // File Upload Handlers
+    // ========================================
+
+    // Click to upload
     dropZone.addEventListener('click', () => fileInput.click());
 
+    // Keyboard accessibility
+    dropZone.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInput.click();
+        }
+    });
+
+    // Drag and drop
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.classList.add('dragover');
     });
 
-    dropZone.addEventListener('dragleave', () => {
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
         dropZone.classList.remove('dragover');
     });
 
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) {
-            handleFile(e.dataTransfer.files[0]);
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFile(files[0]);
         }
     });
 
+    // File input change
     fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) {
+        if (e.target.files.length > 0) {
             handleFile(e.target.files[0]);
         }
     });
 
+    /**
+     * Handle uploaded file
+     * @param {File} file - The uploaded file
+     */
     function handleFile(file) {
-        if (!file.type.match('image.*')) {
-            alert("Please upload an image file.");
+        // Validate file type
+        const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+        if (!validTypes.includes(file.type)) {
+            showNotification('Please upload a valid image file (PNG, JPG, JPEG)', 'error');
             return;
         }
+
+        // Validate file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            showNotification('File size must be less than 10MB', 'error');
+            return;
+        }
+
         currentFile = file;
+
+        // Read and display preview
         const reader = new FileReader();
         reader.onload = (e) => {
             originalPreview.src = e.target.result;
-            // Hide previous results
+
+            // Reset processed image
+            processedPreview.src = '';
+            processedImageUrl = null;
+            downloadBtn.classList.add('hidden');
+
+            // Show results section
             resultsSection.classList.remove('hidden');
-            processedPreview.src = "";
+
+            // Enable process button
             processBtn.disabled = false;
+
+            // Update status
+            updateProcessStatus('Ready', false);
         };
         reader.readAsDataURL(file);
     }
 
-    // --- Context Toggle ---
+    // ========================================
+    // Context Toggle Handlers
+    // ========================================
+
     function updateContextDesc() {
         if (publicRadio.checked) {
             publicDesc.classList.add('active');
@@ -72,18 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
     publicRadio.addEventListener('change', updateContextDesc);
     privateRadio.addEventListener('change', updateContextDesc);
 
-    // --- Processing ---
+    // ========================================
+    // Image Processing
+    // ========================================
+
     processBtn.addEventListener('click', async () => {
         if (!currentFile) return;
 
+        // Show loading state
         loader.classList.remove('hidden');
         processBtn.disabled = true;
+        updateProcessStatus('Processing...', true);
 
+        // Prepare form data
         const formData = new FormData();
         formData.append('file', currentFile);
-
-        const context = publicRadio.checked ? 'public' : 'private';
-        formData.append('context', context);
+        formData.append('context', publicRadio.checked ? 'public' : 'private');
 
         try {
             const response = await fetch('/upload', {
@@ -93,44 +155,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
 
-            if (response.ok) {
-                // The API returns the file path, but we need to fetch it or ensure it's accessible.
-                // Since this is a local setup and we're not serving the samples/output directory explicitly via static yet...
-                // Wait, Flask static folder is ../frontend. 
-                // We need to serve the output images. 
-                // Let's rely on the backend returning a relative URL that we can use?
-                // Currently backend returns absolute path or relative path like 'samples/output/...'
-                // Flask default static folder serves from 'static'. 
-                // We changed static_folder to 'frontend'.
-                // We need a route to serve the processed images.
-
-                // For now, let's assume we need to add a route for image serving or base64.
-                // But wait, I didn't add that route in api/app.py.
-                // I should probably fix that.
-
-                // Let's try to load it. If it fails, I'll fix the backend.
-                // Ideally, the backend should return a URL.
-                // But for now, let's assume the path is directly accessible if we add a route.
-
-                // Actually, let's fix the frontend to expect a data:image/png;base64 if we change backend,
-                // OR we add a route to serve 'samples/output'.
-
-                // Let's assume there is a route /images/<filename>. 
-                // I'll add that route in the next step.
-
-                // Let's construct a path.
+            if (response.ok && data.output_image) {
+                // Extract filename and create URL
                 const filename = data.output_image.split('/').pop();
-                processedPreview.src = `/processed/${filename}?t=${new Date().getTime()}`; // bust cache
+                processedImageUrl = `/processed/${filename}?t=${Date.now()}`;
+
+                // Load processed image
+                processedPreview.src = processedImageUrl;
+
+                // Show download button
+                downloadBtn.classList.remove('hidden');
+
+                // Update status
+                updateProcessStatus('Complete', false);
 
             } else {
-                alert(`Error: ${data.error}`);
+                throw new Error(data.error || 'Processing failed');
             }
-        } catch (err) {
-            console.error(err);
-            alert("An error occurred during processing.");
+        } catch (error) {
+            console.error('Processing error:', error);
+            showNotification(error.message || 'An error occurred during processing', 'error');
+            updateProcessStatus('Error', false);
         } finally {
             loader.classList.add('hidden');
             processBtn.disabled = false;
         }
     });
+
+    // ========================================
+    // Download Handler
+    // ========================================
+
+    downloadBtn.addEventListener('click', () => {
+        if (!processedImageUrl) return;
+
+        // Create download link
+        const link = document.createElement('a');
+        link.href = processedImageUrl;
+        link.download = `protected_${currentFile.name}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // ========================================
+    // Utility Functions
+    // ========================================
+
+    /**
+     * Update the processing status indicator
+     * @param {string} text - Status text
+     * @param {boolean} processing - Whether currently processing
+     */
+    function updateProcessStatus(text, processing) {
+        const statusDot = processStatus.querySelector('.status-dot');
+        const statusText = processStatus.lastChild;
+
+        statusText.textContent = text;
+
+        if (processing) {
+            statusDot.style.background = 'var(--warning)';
+        } else if (text === 'Complete') {
+            statusDot.style.background = 'var(--success)';
+        } else if (text === 'Error') {
+            statusDot.style.background = 'var(--danger)';
+        } else {
+            statusDot.style.background = 'var(--text-muted)';
+        }
+    }
+
+    /**
+     * Show notification to user
+     * @param {string} message - Notification message
+     * @param {string} type - Notification type ('error', 'success', 'info')
+     */
+    function showNotification(message, type = 'info') {
+        // Simple alert for now - could be enhanced with custom notification UI
+        alert(message);
+    }
 });

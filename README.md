@@ -1,13 +1,20 @@
 # 🛡️ Context-Aware AI Eraser
 
-> **A privacy-focused computer vision system that detects and anonymizes sensitive visual content (Faces, License Plates, ID Cards) using a hybrid AI + user-controlled design.**
+> **A premium, privacy-focused computer vision system that detects and anonymizes sensitive visual content (Faces, License Plates, ID Cards) using a hybrid AI + user-controlled design.**
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Computer Vision](https://img.shields.io/badge/Computer%20Vision-OpenCV-green)
 ![YOLO](https://img.shields.io/badge/YOLOv8-Object%20Detection-orange)
-![Frontend](https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-purple)
+![Frontend](https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-black)
+![Design](https://img.shields.io/badge/Design-Monochrome-black)
 ![Status](https://img.shields.io/badge/Status-Beta-green)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
+---
+
+## 👨‍💻 Author
+
+**Made by [Guduguntla Vishva Teja](https://github.com/vishva2410)**
 
 ---
 
@@ -45,8 +52,10 @@ The system is built around two modes:
   - **Faces**: YOLOv8-based face detector (WIDER FACE)
   - **License Plates**: Specialized License Plate detector
   - **ID Cards**: **[NEW]** Document and ID card detection
-- **Premium Web Interface**
-  - Modern, Glassmorphism-inspired UI
+- **Premium Monochrome Interface**
+  - **[NEW]** Professional, sleek, grayscale design
+  - **[NEW]** Square-edged, minimalist aesthetics
+  - **[NEW]** Smooth, professional animations
   - Real-time Public/Private context switching
   - Drag-and-drop file upload
 - **Modular Backend Architecture**
@@ -64,7 +73,7 @@ The system is built around two modes:
 ### ✅ Implemented
 - **YOLOv8 Object Detection**: Faces, License Plates, ID Cards.
 - **Privacy Pipeline**: Configurable contexts (Public/Private).
-- **Frontend**: Beautified HTML/CSS/JS interface.
+- **Frontend**: **[Redesigned]** Complete overhaul to a premium monochrome theme.
 - **Backend**: Robust Flask API handling uploads and processing.
 
 ### 🗓️ Planned
@@ -95,7 +104,7 @@ source venv/bin/activate   # macOS/Linux
 # venv\Scripts\activate    # Windows
 
 pip install -r requirements.txt
-````
+```
 
 ---
 

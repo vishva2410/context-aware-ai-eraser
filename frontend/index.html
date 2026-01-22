@@ -4,84 +4,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Context-Aware AI Eraser</title>
+    <meta name="description"
+        content="Context-Aware AI Eraser - Intelligent privacy protection for your visual content using AI-powered detection and anonymization.">
+    <title>Context-Aware AI Eraser | Privacy Protection</title>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="background-glow"></div>
     <div class="container">
+        <!-- Header -->
         <header>
-            <h1>Context-Aware <span class="gradient-text">AI Eraser</span></h1>
-            <p class="subtitle">Intelligent privacy protection for your visual content.</p>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                </div>
+            </div>
+            <h1>Context-Aware AI Eraser</h1>
+            <p class="subtitle">Intelligent privacy protection for your visual content</p>
         </header>
 
+        <!-- Main Content -->
         <main>
-            <div class="glass-panel upload-section">
-                <div class="upload-area" id="drop-zone">
-                    <div class="icon-container">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 16L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M9 11L12 8 15 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M8 16H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path
-                                d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z"
-                                stroke="currentColor" stroke-width="2" />
+            <!-- Upload Panel -->
+            <section class="panel" id="upload-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Upload</span>
+                    <span class="panel-badge">Step 1</span>
+                </div>
+
+                <div class="upload-area" id="drop-zone" tabindex="0" role="button" aria-label="Upload image">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
                         </svg>
                     </div>
-                    <h3>Upload an Image</h3>
-                    <p>Drag & drop or click to browse</p>
+                    <p class="upload-title">Drop image here or click to browse</p>
+                    <p class="upload-hint">Supports PNG, JPG, JPEG</p>
+                    <div class="upload-formats">
+                        <span class="format-tag">PNG</span>
+                        <span class="format-tag">JPG</span>
+                        <span class="format-tag">JPEG</span>
+                    </div>
                     <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg" hidden>
+                </div>
+            </section>
+
+            <!-- Controls Panel -->
+            <section class="panel" id="controls-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Configure</span>
+                    <span class="panel-badge">Step 2</span>
                 </div>
 
                 <div class="controls">
-                    <label class="toggle-label">Anonymization Context</label>
-                    <div class="toggle-switch">
-                        <input type="radio" name="context" id="public" value="public" checked>
-                        <label for="public">Public</label>
-                        <input type="radio" name="context" id="private" value="private">
-                        <label for="private">Private</label>
-                        <div class="slider"></div>
+                    <div class="control-group">
+                        <label class="control-label">Anonymization Context</label>
+                        <div class="context-toggle">
+                            <input type="radio" name="context" id="public" value="public" checked>
+                            <label for="public" class="context-option">Public</label>
+                            <input type="radio" name="context" id="private" value="private">
+                            <label for="private" class="context-option">Private</label>
+                        </div>
+                        <div class="context-description">
+                            <span id="public-desc" class="active">
+                                <span class="context-icon public"></span>
+                                Blur license plates & IDs. Preserve faces for usability.
+                            </span>
+                            <span id="private-desc">
+                                <span class="context-icon private"></span>
+                                Aggressive anonymization. Erase all sensitive data including faces.
+                            </span>
+                        </div>
                     </div>
-                    <div class="context-desc">
-                        <span id="public-desc" class="active">Blur plates & IDs. Preserve faces.</span>
-                        <span id="private-desc">Aggressively erase/blur all sensitive data.</span>
-                    </div>
-                    <button id="process-btn" class="primary-btn" disabled>
+
+                    <button id="process-btn" class="btn btn-primary" disabled>
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
                         <span>Process Image</span>
                     </button>
                 </div>
-            </div>
+            </section>
 
-            <div class="glass-panel results-section hidden" id="results-section">
-                <div class="result-card">
-                    <h4>Original</h4>
-                    <div class="image-wrapper">
-                        <img id="original-preview" src="" alt="Original">
-                    </div>
+            <!-- Results Panel -->
+            <section class="panel results-section hidden" id="results-section">
+                <div class="panel-header">
+                    <span class="panel-title">Results</span>
+                    <span class="panel-badge">Output</span>
                 </div>
-                <div class="result-card">
-                    <h4>Protected</h4>
-                    <div class="image-wrapper">
-                        <img id="processed-preview" src="" alt="Protected">
-                        <div class="loader-overlay hidden" id="loader">
-                            <div class="spinner"></div>
+
+                <div class="results-grid">
+                    <!-- Original Image -->
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-title">Original</span>
+                            <span class="result-status">
+                                <span class="status-dot"></span>
+                                Uploaded
+                            </span>
+                        </div>
+                        <div class="image-container">
+                            <img id="original-preview" src="" alt="Original image">
+                        </div>
+                    </div>
+
+                    <!-- Processed Image -->
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-title">Protected</span>
+                            <span class="result-status" id="process-status">
+                                <span class="status-dot"></span>
+                                Ready
+                            </span>
+                        </div>
+                        <div class="image-container">
+                            <img id="processed-preview" src="" alt="Protected image">
+                            <div class="loader-overlay hidden" id="loader">
+                                <div class="spinner"></div>
+                                <span class="loader-text">Processing</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <button id="download-btn" class="btn btn-secondary download-btn hidden">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    <span>Download Protected Image</span>
+                </button>
+            </section>
         </main>
 
+        <!-- Footer -->
         <footer>
-            <p>Powered by YOLOv8 & Context-Aware Privacy Engine</p>
+            <div class="footer-content">
+                <p class="footer-text">Powered by YOLOv8 & Context-Aware Privacy Engine</p>
+                <p class="footer-text">Made by <strong>Guduguntla Vishva Teja</strong></p>
+                <div class="footer-links">
+                    <a href="https://github.com/vishva2410/context-aware-ai-eraser" class="footer-link" target="_blank"
+                        rel="noopener">GitHub</a>
+                    <span class="footer-link">v1.0</span>
+                </div>
+            </div>
         </footer>
     </div>
+
     <script src="script.js"></script>
 </body>
 
