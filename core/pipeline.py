@@ -1,9 +1,11 @@
 from core.detectors.face_detector import FaceDetector
 from core.detectors.plate_detector import PlateDetector
+from core.detectors.id_detector import IDDetector
 from core.eraser import apply_anonymization
 
 face_detector = FaceDetector("models/face_detect.pt")
 plate_detector = PlateDetector("models/lp_detect.pt")
+id_detector = IDDetector("models/id_detect.pt")
 
 # Renamed to match API expectation
 def run_pipeline(image_path, context="public"):
@@ -13,20 +15,12 @@ def run_pipeline(image_path, context="public"):
     if image is None:
         raise ValueError(f"Could not load image: {image_path}")
 
-    # Run detectors (detectors accept image path or numpy array depending on implementation, 
-    # but based on previous view, they prefer path or just work with YOLO. 
-    # Let's pass the path to detectors as they seem to use ultralytics directly on input)
-    # FaceDetector.detect takes image_path. PlateDetector.detect takes image.
-    # Let's check PlateDetector again. It takes 'image'. YOLO can take path or array. 
-    # To be safe, let's pass image_path to both if possible, or array.
-    # FaceDetector lines 8-9: results = self.model(image_path, conf=self.conf)
-    # PlateDetector lines 8-9: results = self.model(image, conf=self.conf, verbose=False)
-    
-    # Passing the image path is safest for YOLO
+    # Run detectors
     faces = face_detector.detect(image_path) 
     plates = plate_detector.detect(image_path)
+    ids = id_detector.detect(image_path)
 
-    detections = faces + plates
+    detections = faces + plates + ids
 
     # Apply eraser
     output_image = apply_anonymization(

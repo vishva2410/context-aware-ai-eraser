@@ -1,11 +1,12 @@
 # 🛡️ Context-Aware AI Eraser
 
-> **A privacy-focused computer vision system that detects and anonymizes sensitive visual content using a hybrid AI + user-controlled design.**
+> **A privacy-focused computer vision system that detects and anonymizes sensitive visual content (Faces, License Plates, ID Cards) using a hybrid AI + user-controlled design.**
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Computer Vision](https://img.shields.io/badge/Computer%20Vision-OpenCV-green)
 ![YOLO](https://img.shields.io/badge/YOLOv8-Object%20Detection-orange)
-![Status](https://img.shields.io/badge/Status-Prototype-yellow)
+![Frontend](https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-purple)
+![Status](https://img.shields.io/badge/Status-Beta-green)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 ---
@@ -18,9 +19,7 @@ Accidental exposure of sensitive visual information (faces, license plates, IDs)
 
 Instead of blindly blurring everything, the system follows a **hybrid AI + human-in-the-loop approach**:
 - AI detects *potentially sensitive regions*
-- The user decides *how aggressively* those regions should be anonymized
-
-This mirrors how real-world privacy tools are designed.
+- The user decides *how aggressively* those regions should be anonymized via a comprehensive UI.
 
 ---
 
@@ -32,27 +31,28 @@ Context = **User Intent**
 The system is built around two modes:
 
 - **Public Context**
-  - Minimal anonymization
+  - Minimal anonymization (Blurring)
   - Preserve usability and aesthetics
 - **Private Context**
-  - Aggressive anonymization
+  - Aggressive anonymization (Inpainting/Blackout)
   - Maximum privacy protection
-
-This avoids over-censorship while still protecting sensitive data.
 
 ---
 
-## ✨ Key Features (Current)
+## ✨ Key Features
 
-- **Face Detection**
-  - YOLOv8-based face detector
-  - Trained on the WIDER FACE dataset
-  - Bounding-box based detection
+- **Multi-Object Detection**
+  - **Faces**: YOLOv8-based face detector (WIDER FACE)
+  - **License Plates**: Specialized License Plate detector
+  - **ID Cards**: **[NEW]** Document and ID card detection
+- **Premium Web Interface**
+  - Modern, Glassmorphism-inspired UI
+  - Real-time Public/Private context switching
+  - Drag-and-drop file upload
 - **Modular Backend Architecture**
   - Separate detectors per object type
   - Pipeline-based design for extensibility
-- **Privacy-Oriented Anonymization**
-  - Face blurring using OpenCV
+  - Flask API with static file serving
 - **Local Processing**
   - No cloud dependency
   - Images processed entirely on-device
@@ -62,21 +62,14 @@ This avoids over-censorship while still protecting sensitive data.
 ## 🧪 Project Status
 
 ### ✅ Implemented
-- YOLOv8 face detection model
-- Flask backend API
-- Modular detection pipeline
-- End-to-end image upload → detection → anonymization (prototype)
-
-### 🚧 In Progress
-- Blur pipeline stabilization
-- Context-based anonymization rules
-- API response standardization
+- **YOLOv8 Object Detection**: Faces, License Plates, ID Cards.
+- **Privacy Pipeline**: Configurable contexts (Public/Private).
+- **Frontend**: Beautified HTML/CSS/JS interface.
+- **Backend**: Robust Flask API handling uploads and processing.
 
 ### 🗓️ Planned
-- License plate detection
-- ID / document region detection
-- Erase (inpainting) mode for private context
-- Simple frontend UI for context selection
+- Advanced Scene Understanding (ViT/CLIP)
+- Video Processing Support
 
 ---
 
@@ -84,13 +77,14 @@ This avoids over-censorship while still protecting sensitive data.
 
 - **Language:** Python 3.9+
 - **Backend:** Flask
+- **Frontend:** HTML5, CSS3, Vanilla JS
 - **Computer Vision:** OpenCV
 - **Object Detection:** YOLOv8 (Ultralytics)
 - **Image Processing:** NumPy, Pillow
 
 ---
 
-## 🚀 Installation (Development)
+## 🚀 Installation
 
 ```bash
 git clone https://github.com/vishva2410/context-aware-ai-eraser.git
@@ -105,63 +99,31 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Running the Backend
+## ▶️ Running the Application
 
-```bash
-python -m api.app
-```
+1. **Start the Backend**:
+   ```bash
+   python -m api.app
+   ```
 
-Then open:
-
-```
-http://127.0.0.1:5000
-```
+2. **Access the Interface**:
+   Open browser to:
+   ```
+   http://127.0.0.1:5000
+   ```
 
 ---
 
 ## 🧠 High-Level Workflow
 
-1. Image is uploaded to the backend
-2. Detection pipeline identifies sensitive regions
-3. Bounding boxes are generated
-4. Anonymization logic applies blur based on context
-5. Sanitized image is returned
-
----
-
-## 🔮 Future Roadmap
-
-* License plate detection using YOLO
-* ID-like region detection (documents, badges)
-* Inpainting-based erase mode
-* Frontend for interactive context selection
-* Improved scene understanding for smarter redaction
-
----
-
-## 📌 Disclaimer
-
-This project is an **academic / prototype system** and is not intended for production deployment without further validation, optimization, and security hardening.
+1. Image is uploaded via the Web UI.
+2. User selects **Context** (Public vs Private).
+3. Detection pipeline identifies sensitive regions (Faces, Plates, IDs).
+4. Anonymization logic applies blur or erase based on context.
+5. Protected image is displayed instantly.
 
 ---
 
 ## 📜 License
 
 This project is licensed under the **MIT License**.
-
-````
-
----
-
-## ✅ What to do next (important)
-
-1. Paste this into `README.md`
-2. Commit:
-   ```bash
-   git add README.md
-   git commit -m "Improve README: clarify scope, architecture, and project status"
-````
-
-3. Push after rebase (as discussed earlier)
-
----

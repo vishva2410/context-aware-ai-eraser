@@ -14,7 +14,7 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@api_routes.route("/", methods=["GET"])
+@api_routes.route("/health", methods=["GET"])
 def health():
     return jsonify({
         "status": "ok",
@@ -44,7 +44,8 @@ def upload_image():
     file.save(file_path)
 
     # 4️⃣ Run pipeline
-    result = run_pipeline(file_path)
+    context = request.form.get("context", "public")
+    result = run_pipeline(file_path, context=context)
 
     # 5️⃣ Return response
     return jsonify({
