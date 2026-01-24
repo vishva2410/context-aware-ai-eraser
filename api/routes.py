@@ -6,7 +6,8 @@ from core.pipeline import run_pipeline
 
 api_routes = Blueprint("api_routes", __name__)
 
-UPLOAD_FOLDER = "samples/input"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "samples/input")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 
