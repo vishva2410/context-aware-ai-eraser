@@ -1,3 +1,10 @@
 venv/
 __pycache__/
 .env
+
+.DS_Store
+samples/output/
+samples/input/
+*.pyc
+.venv/
+venv/

@@ -4,3 +4,4 @@ flask
 pillow
 ultralytics
 gunicorn==23.0.0
+

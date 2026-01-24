@@ -166,6 +166,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Show download button
                 downloadBtn.classList.remove('hidden');
 
+                // Auto download
+                const link = document.createElement('a');
+                link.href = processedImageUrl;
+                link.download = `protected_${currentFile.name}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
                 // Update status
                 updateProcessStatus('Complete', false);
 
