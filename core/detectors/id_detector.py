@@ -11,6 +11,13 @@ class IDDetector:
 
         if results and results[0].boxes is not None:
             for box in results[0].boxes:
+                cls_id = int(box.cls[0])
+                class_name = results[0].names[cls_id]
+                
+                # Only detect actual ID cards/straps
+                if class_name != "with_id_strap":
+                    continue
+
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 detections.append({
                     "label": "id_card",
