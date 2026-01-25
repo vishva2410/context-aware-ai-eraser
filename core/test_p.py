@@ -1,18 +1,20 @@
-import cv2
-from core.pipeline import process_image
+import os
+from core.pipeline import run_pipeline
 
-# Load test image
-img = cv2.imread("samples/input/car.jpg")
+# Test image path
+image_path = "face1.png"
 
-if img is None:
-    raise ValueError("Image not found. Check path: samples/input/car.jpg")
+if not os.path.exists(image_path):
+    raise ValueError(f"Image not found. Check path: {image_path}")
 
 # PUBLIC context
-out_public, _ = process_image(img.copy(), context="public")
-cv2.imwrite("samples/output/public.jpg", out_public)
+print("Running PUBLIC context...")
+res_public = run_pipeline(image_path, context="public")
+print(f"✅ Public output: {res_public['output_image']}")
 
 # PRIVATE context
-out_private, _ = process_image(img.copy(), context="private")
-cv2.imwrite("samples/output/private.jpg", out_private)
+print("Running PRIVATE context...")
+res_private = run_pipeline(image_path, context="private")
+print(f"✅ Private output: {res_private['output_image']}")
 
 print("✅ Test completed. Check samples/output/")

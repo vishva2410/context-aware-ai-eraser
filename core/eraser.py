@@ -34,15 +34,12 @@ def apply_anonymization(image, detections, context="public"):
             elif context == "private":
                 image = erase_region(image, x1, y1, x2, y2)
 
-        # FACE RULES (already detected)
+        # FACE RULES
         elif label == "face":
-            if context == "private":
+            if context == "public":
                 image = blur_region(image, x1, y1, x2, y2)
-
-        # FACE RULES (already detected)
-        elif label == "face":
-            if context == "private":
-                image = blur_region(image, x1, y1, x2, y2)
+            elif context == "private":
+                image = erase_region(image, x1, y1, x2, y2)
 
         # ID CARD RULES
         elif label == "id_card":
