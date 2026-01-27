@@ -6,6 +6,10 @@ class PlateDetector:
         self.conf = conf
 
     def detect(self, image):
+        """
+        Detect license plates in the given image.
+        :param image: numpy array (cv2 image) or file path
+        """
         results = self.model(image, conf=self.conf, verbose=False)
         detections = []
 

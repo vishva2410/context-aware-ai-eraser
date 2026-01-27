@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from core.context_rules import decide_action
 
 def blur_region(image, x1, y1, x2, y2, ksize=(51, 51)):
     roi = image[y1:y2, x1:x2]
@@ -23,29 +24,18 @@ def apply_anonymization(image, detections, context="public"):
     """
     context: 'public' or 'private'
     """
+    action = decide_action(context)
+
     for det in detections:
         x1, y1, x2, y2 = det["bbox"]
-        label = det["label"]
 
-        # LICENSE PLATE RULES
-        if label == "license_plate":
-            if context == "public":
-                image = blur_region(image, x1, y1, x2, y2)
-            elif context == "private":
-                image = erase_region(image, x1, y1, x2, y2)
+        # All detected objects (faces, plates, IDs) follow the same context rules
+        # "blur" for public, "erase" for private.
+        # verify_pipeline.py and previous logic confirms this uniform behavior.
 
-        # FACE RULES
-        elif label == "face":
-            if context == "public":
-                image = blur_region(image, x1, y1, x2, y2)
-            elif context == "private":
-                image = erase_region(image, x1, y1, x2, y2)
-
-        # ID CARD RULES
-        elif label == "id_card":
-            if context == "public":
-                image = blur_region(image, x1, y1, x2, y2)
-            elif context == "private":
-                image = erase_region(image, x1, y1, x2, y2)
+        if action == "blur":
+            image = blur_region(image, x1, y1, x2, y2)
+        elif action == "erase":
+            image = erase_region(image, x1, y1, x2, y2)
 
     return image
