@@ -11,11 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file-input');
     const processBtn = document.getElementById('process-btn');
     const downloadBtn = document.getElementById('download-btn');
-    const originalPreview = document.getElementById('original-preview');
-    const processedPreview = document.getElementById('processed-preview');
     const resultsSection = document.getElementById('results-section');
     const loader = document.getElementById('loader');
     const processStatus = document.getElementById('process-status');
+
+    // Result Containers
+    const imageComparison = document.getElementById('image-comparison');
+    // Video elements removed
+
+    // Image Elements
+    const compOriginal = document.getElementById('comp-original');
+    const compProcessed = document.getElementById('comp-processed');
+    const sliderHandle = document.querySelector('.handle');
+    const afterWrapper = document.querySelector('.image-wrapper.after');
+
 
     // Context Toggle Elements
     const publicRadio = document.getElementById('public');
@@ -25,16 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // State
     let currentFile = null;
-    let processedImageUrl = null;
+    let processedUrl = null;
+    let isDragging = false;
 
     // ========================================
     // File Upload Handlers
     // ========================================
 
-    // Click to upload
     dropZone.addEventListener('click', () => fileInput.click());
 
-    // Keyboard accessibility
     dropZone.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -42,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Drag and drop
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.classList.add('dragover');
@@ -56,65 +63,109 @@ document.addEventListener('DOMContentLoaded', () => {
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropZone.classList.remove('dragover');
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            handleFile(files[0]);
+        if (e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
         }
     });
 
-    // File input change
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
             handleFile(e.target.files[0]);
         }
     });
 
-    /**
-     * Handle uploaded file
-     * @param {File} file - The uploaded file
-     */
     function handleFile(file) {
         // Validate file type
-        const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-        if (!validTypes.includes(file.type)) {
-            showNotification('Please upload a valid image file (PNG, JPG, JPEG)', 'error');
+        const validImageTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+
+        if (!validImageTypes.includes(file.type)) {
+            showNotification('Please upload a valid image (PNG/JPG)', 'error');
             return;
         }
 
         // Validate file size (max 10MB)
         const maxSize = 10 * 1024 * 1024;
         if (file.size > maxSize) {
-            showNotification('File size must be less than 10MB', 'error');
+            showNotification('File too large. Max size: 10MB', 'error');
             return;
         }
 
         currentFile = file;
 
-        // Read and display preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            originalPreview.src = e.target.result;
+        // Reset UI
+        resultsSection.classList.remove('hidden');
+        processBtn.disabled = false;
+        downloadBtn.classList.add('hidden');
+        processedUrl = null;
+        updateProcessStatus('Ready to Process', false);
 
-            // Reset processed image
-            processedPreview.src = '';
-            processedImageUrl = null;
-            downloadBtn.classList.add('hidden');
+        const objectUrl = URL.createObjectURL(file);
 
-            // Show results section
-            resultsSection.classList.remove('hidden');
+        // Setup Image Comparison View
+        if (imageComparison) imageComparison.classList.remove('hidden');
+        const videoResult = document.getElementById('video-result');
+        if (videoResult) videoResult.classList.add('hidden'); // Hide if exists
 
-            // Enable process button
-            processBtn.disabled = false;
+        if (compOriginal) compOriginal.src = objectUrl;
+        if (compProcessed) compProcessed.src = objectUrl; // Initially match original
 
-            // Update status
-            updateProcessStatus('Ready', false);
-        };
-        reader.readAsDataURL(file);
+        // Reset slider position
+        if (sliderHandle) sliderHandle.style.left = '50%';
+        if (afterWrapper) afterWrapper.style.width = '50%';
     }
 
     // ========================================
-    // Context Toggle Handlers
+    // Comparison Slider Logic
+    // ========================================
+
+    function updateSlider(x) {
+        if (!imageComparison || !sliderHandle) return;
+        const sliderRect = imageComparison.getBoundingClientRect();
+        let percentage = ((x - sliderRect.left) / sliderRect.width) * 100;
+
+        // Clamp
+        percentage = Math.max(0, Math.min(100, percentage));
+
+        sliderHandle.style.left = `${percentage}%`;
+
+        // The 'after' image is the PROCESSED one (bottom layer logic usually, but here:
+        // wrapper.after has z-index 1. wrapper.before (original) has z-index 2.
+        // If we want to reveal the 'processed' image, we clip the 'before' image.
+        // Let's adjust: "before" wrapper is Original (Top). "after" wrapper is Processed (Bottom).
+
+        // Actually earlier CSS: .before { z-index: 2; width: 50% }
+        // So 'before' (Original) is being clipped. 
+        // 100% width = Full Original. 0% width = Full Processed.
+
+        // Let's invert the slider logic to make it intuitive:
+        // Slide Right -> Reveal Processed? Or Reveal Original?
+
+        // Let's use clip-path or width on the TOP element (Original).
+        const originalWrapper = document.querySelector('.image-wrapper.before');
+        if (originalWrapper) originalWrapper.style.width = `${percentage}%`;
+    }
+
+    if (imageComparison) {
+        imageComparison.addEventListener('mousedown', () => isDragging = true);
+        imageComparison.addEventListener('touchstart', () => isDragging = true);
+    }
+
+    document.addEventListener('mouseup', () => isDragging = false);
+    document.addEventListener('touchend', () => isDragging = false);
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        updateSlider(e.clientX);
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        updateSlider(e.touches[0].clientX);
+    });
+
+
+    // ========================================
+    // Context Toggle
     // ========================================
 
     function updateContextDesc() {
@@ -127,22 +178,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    publicRadio.addEventListener('change', updateContextDesc);
-    privateRadio.addEventListener('change', updateContextDesc);
+    if (publicRadio && privateRadio) {
+        publicRadio.addEventListener('change', updateContextDesc);
+        privateRadio.addEventListener('change', updateContextDesc);
+    }
 
     // ========================================
-    // Image Processing
+    // Processing Logic
     // ========================================
 
     processBtn.addEventListener('click', async () => {
         if (!currentFile) return;
 
-        // Show loading state
         loader.classList.remove('hidden');
         processBtn.disabled = true;
-        updateProcessStatus('Processing...', true);
+        updateProcessStatus('Processing Image...', true);
 
-        // Prepare form data
         const formData = new FormData();
         formData.append('file', currentFile);
         formData.append('context', publicRadio.checked ? 'public' : 'private');
@@ -153,28 +204,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: formData
             });
 
-            const data = await response.json();
+            // Robust JSON handling
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                // If text/html, it's likely a server exception that wasn't caught as JSON
+                const text = await response.text();
+                console.error("Non-JSON response:", text);
+                throw new Error("Server returned an invalid response (not JSON). See console.");
+            }
 
             if (response.ok && data.output_image) {
-                // Extract filename and create URL
                 const filename = data.output_image.split('/').pop();
-                processedImageUrl = `/processed/${filename}?t=${Date.now()}`;
+                processedUrl = `/processed/${filename}?t=${Date.now()}`;
 
-                // Load processed image
-                processedPreview.src = processedImageUrl;
+                if (compProcessed) compProcessed.src = processedUrl;
 
-                // Show download button
+                // Reset slider to middle to show difference
+                if (imageComparison) {
+                    updateSlider(imageComparison.getBoundingClientRect().left + (imageComparison.offsetWidth / 2));
+                }
+
                 downloadBtn.classList.remove('hidden');
 
-                // Auto download
-                const link = document.createElement('a');
-                link.href = processedImageUrl;
-                link.download = `protected_${currentFile.name}`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                // Update status
                 updateProcessStatus('Complete', false);
 
             } else {
@@ -182,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Processing error:', error);
-            showNotification(error.message || 'An error occurred during processing', 'error');
+            showNotification(error.message || 'An error occurred', 'error');
             updateProcessStatus('Error', false);
         } finally {
             loader.classList.add('hidden');
@@ -195,50 +249,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
 
     downloadBtn.addEventListener('click', () => {
-        if (!processedImageUrl) return;
+        if (!processedUrl) return;
 
-        // Create download link
         const link = document.createElement('a');
-        link.href = processedImageUrl;
+        link.href = processedUrl;
         link.download = `protected_${currentFile.name}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     });
 
-    // ========================================
-    // Utility Functions
-    // ========================================
-
-    /**
-     * Update the processing status indicator
-     * @param {string} text - Status text
-     * @param {boolean} processing - Whether currently processing
-     */
     function updateProcessStatus(text, processing) {
         const statusDot = processStatus.querySelector('.status-dot');
         const statusText = processStatus.lastChild;
 
-        statusText.textContent = text;
+        if (statusText) statusText.textContent = text;
 
-        if (processing) {
-            statusDot.style.background = 'var(--warning)';
-        } else if (text === 'Complete') {
-            statusDot.style.background = 'var(--success)';
-        } else if (text === 'Error') {
-            statusDot.style.background = 'var(--danger)';
-        } else {
-            statusDot.style.background = 'var(--text-muted)';
+        if (statusDot) {
+            if (processing) {
+                statusDot.style.background = 'var(--warning)';
+            } else if (text === 'Complete') {
+                statusDot.style.background = 'var(--success)';
+            } else if (text === 'Error') {
+                statusDot.style.background = 'var(--danger)';
+            } else {
+                statusDot.style.background = 'var(--text-muted)';
+            }
         }
     }
 
-    /**
-     * Show notification to user
-     * @param {string} message - Notification message
-     * @param {string} type - Notification type ('error', 'success', 'info')
-     */
     function showNotification(message, type = 'info') {
-        // Simple alert for now - could be enhanced with custom notification UI
         alert(message);
     }
 });

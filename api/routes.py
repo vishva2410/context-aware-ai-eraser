@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 import os
 from werkzeug.utils import secure_filename
+import traceback
 
 from core.pipeline import run_pipeline
 
@@ -25,33 +26,43 @@ def health():
 
 @api_routes.route("/upload", methods=["POST"])
 def upload_image():
-    # 1️⃣ Check file exists
-    if "file" not in request.files:
-        return jsonify({"error": "No image file provided"}), 400
+    try:
+        # 1️⃣ Check file exists
+        if "file" not in request.files:
+            return jsonify({"error": "No file provided"}), 400
 
-    file = request.files["file"]
+        file = request.files["file"]
 
-    # 2️⃣ Validate filename
-    if file.filename == "":
-        return jsonify({"error": "Empty filename"}), 400
+        # 2️⃣ Validate filename
+        if file.filename == "":
+            return jsonify({"error": "Empty filename"}), 400
 
-    if not allowed_file(file.filename):
-        return jsonify({"error": "Unsupported file type"}), 400
+        if not allowed_file(file.filename):
+            return jsonify({"error": "Unsupported file type. Only PNG, JPG, JPEG allowed."}), 400
 
-    # 3️⃣ Save file
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(file_path)
+        # 3️⃣ Save file
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        print(f"DEBUG: Saving file to {file_path}")
+        file.save(file_path)
 
-    # 4️⃣ Run pipeline
-    context = request.form.get("context", "public")
-    result = run_pipeline(file_path, context=context)
+        # 4️⃣ Run pipeline
+        print(f"DEBUG: Starting pipeline for {filename}")
+        context = request.form.get("context", "public")
+        
+        result = run_pipeline(file_path, context=context)
 
-    # 5️⃣ Return response
-    return jsonify({
-        "status": "success",
-        "filename": filename,
-        "detections": result["detections"],
-        "output_image": result["output_image"]
-    }), 200
+        # 5️⃣ Return response
+        return jsonify({
+            "status": "success",
+            "filename": filename,
+            "detections": result["detections"],
+            "output_image": result["output_image"],
+            "is_video": False
+        }), 200
+
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500

@@ -92,7 +92,7 @@
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                         </svg>
-                        <span>Process Image</span>
+                        <span>Process Media</span>
                     </button>
                 </div>
             </section>
@@ -104,37 +104,32 @@
                     <span class="panel-badge">Output</span>
                 </div>
 
-                <div class="results-grid">
-                    <!-- Original Image -->
-                    <div class="result-card">
-                        <div class="result-header">
-                            <span class="result-title">Original</span>
-                            <span class="result-status">
-                                <span class="status-dot"></span>
-                                Uploaded
-                            </span>
+                <div class="results-container">
+                    <!-- Image Comparison Slider -->
+                    <div id="image-comparison" class="comparison-slider hidden">
+                        <div class="image-wrapper before">
+                            <img id="comp-original" src="" alt="Original">
+                            <span class="label-badge">Original</span>
                         </div>
-                        <div class="image-container">
-                            <img id="original-preview" src="" alt="Original image">
+                        <div class="image-wrapper after">
+                            <img id="comp-processed" src="" alt="Processed">
+                            <span class="label-badge">Protcted</span>
+                        </div>
+                        <div class="handle">
+                            <div class="handle-line"></div>
+                            <div class="handle-circle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8L22 12L18 16" />
+                                    <path d="M6 8L2 12L6 16" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Processed Image -->
-                    <div class="result-card">
-                        <div class="result-header">
-                            <span class="result-title">Protected</span>
-                            <span class="result-status" id="process-status">
-                                <span class="status-dot"></span>
-                                Ready
-                            </span>
-                        </div>
-                        <div class="image-container">
-                            <img id="processed-preview" src="" alt="Protected image">
-                            <div class="loader-overlay hidden" id="loader">
-                                <div class="spinner"></div>
-                                <span class="loader-text">Processing</span>
-                            </div>
-                        </div>
+                    <!-- Loading Overlay -->
+                    <div class="loader-overlay hidden" id="loader">
+                        <div class="spinner"></div>
+                        <span class="loader-text">Processing...</span>
                     </div>
                 </div>
 

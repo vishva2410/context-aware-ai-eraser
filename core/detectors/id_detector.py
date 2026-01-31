@@ -5,8 +5,8 @@ class IDDetector:
         self.model = YOLO(model_path)
         self.conf = conf
 
-    def detect(self, image_path):
-        results = self.model(image_path, conf=self.conf)
+    def detect(self, image_source):
+        results = self.model(image_source, conf=self.conf)
         detections = []
 
         if results and results[0].boxes is not None:
