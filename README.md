@@ -1,7 +1,7 @@
 # 🛡️ Context-Aware AI Eraser
 
 **Privacy-first image anonymization with a human-in-the-loop workflow.**  
-Detect faces, license plates, and ID cards, then blur or erase based on your context.
+Detect faces, license plates, and ID cards, then blur or erase them based on your context.
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Computer Vision](https://img.shields.io/badge/Computer%20Vision-OpenCV-green)
@@ -46,12 +46,15 @@ flowchart TD
 ---
 
 ## 🎯 Privacy Modes
-- **Public**
-  - Blur plates and IDs
-  - Preserve faces for usability
-- **Private**
-  - Aggressive anonymization (erase/blur all sensitive regions)
-  - Maximum privacy protection
+- **Public:** blur plates and IDs, preserve faces for usability
+- **Private:** aggressive anonymization (erase/blur all sensitive regions) for maximum privacy
+
+---
+
+## 💡 Use Cases
+- Sharing photos on social media without exposing sensitive data
+- Redacting IDs and plates before sending to clients or teams
+- Privacy-safe dataset previews for demos and presentations
 
 ---
 
@@ -97,6 +100,7 @@ http://127.0.0.1:5000
 ---
 
 ## 🧭 Future Goals
+- **Smart sharing protection:** if a photo is shared publicly or with unknown/unregistered recipients, automatically blur sensitive data such as account numbers, license plates, addresses, faces, and IDs.
 - Advanced scene understanding with ViT/CLIP for richer context
 - Video processing pipeline with frame sampling + tracking
 - User-controlled sensitivity sliders per object type
