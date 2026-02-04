@@ -50,11 +50,15 @@ def run_pipeline(input_path, context="public"):
     )
 
     # Save output
-    output_path = os.path.join(output_dir, f"processed_{filename}")
-    cv2.imwrite(output_path, output_image)
-    
+    output_filename = f"processed_{filename}"
+    output_path = os.path.join(output_dir, output_filename)
+    saved = cv2.imwrite(output_path, output_image)
+    if not saved:
+        raise RuntimeError(f"Failed to write output image to {output_path}")
+
     return {
         "detections": detections,
         "output_image": output_path,
+        "output_filename": output_filename,
         "is_video": False
     }

@@ -53,12 +53,15 @@ def upload_image():
         
         result = run_pipeline(file_path, context=context)
 
-        # 5️⃣ Return response
+        # 5️⃣ Return response (frontend expects a relative URL)
+        output_filename = result.get("output_filename")
+        output_url = f"/processed/{output_filename}" if output_filename else None
+
         return jsonify({
             "status": "success",
             "filename": filename,
             "detections": result["detections"],
-            "output_image": result["output_image"],
+            "output_image": output_url,
             "is_video": False
         }), 200
 

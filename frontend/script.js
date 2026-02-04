@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsSection = document.getElementById('results-section');
     const loader = document.getElementById('loader');
     const processStatus = document.getElementById('process-status');
+    const detectionSummary = document.getElementById('detection-summary');
 
     // Result Containers
     const imageComparison = document.getElementById('image-comparison');
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFile = null;
     let processedUrl = null;
     let isDragging = false;
+    const autoDownloadEnabled = true;
 
     // ========================================
     // File Upload Handlers
@@ -98,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.classList.add('hidden');
         processedUrl = null;
         updateProcessStatus('Ready to Process', false);
+        updateDetectionSummary('Ready');
 
         const objectUrl = URL.createObjectURL(file);
 
@@ -193,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loader.classList.remove('hidden');
         processBtn.disabled = true;
         updateProcessStatus('Processing Image...', true);
+        updateDetectionSummary('Processing...');
 
         const formData = new FormData();
         formData.append('file', currentFile);
@@ -217,8 +221,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (response.ok && data.output_image) {
-                const filename = data.output_image.split('/').pop();
-                processedUrl = `/processed/${filename}?t=${Date.now()}`;
+                if (data.output_image.startsWith('/processed/')) {
+                    processedUrl = `${data.output_image}?t=${Date.now()}`;
+                } else {
+                    const filename = data.output_image.split(/[\\/]/).pop();
+                    processedUrl = `/processed/${filename}?t=${Date.now()}`;
+                }
 
                 if (compProcessed) compProcessed.src = processedUrl;
 
@@ -227,10 +235,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateSlider(imageComparison.getBoundingClientRect().left + (imageComparison.offsetWidth / 2));
                 }
 
+                const detectionCount = Array.isArray(data.detections) ? data.detections.length : 0;
+                if (detectionCount === 0) {
+                    updateDetectionSummary('No sensitive regions detected');
+                } else {
+                    updateDetectionSummary(`${detectionCount} region${detectionCount === 1 ? '' : 's'} detected`);
+                }
+
                 downloadBtn.classList.remove('hidden');
 
                 updateProcessStatus('Complete', false);
 
+                if (autoDownloadEnabled) {
+                    triggerDownload();
+                }
             } else {
                 throw new Error(data.error || 'Processing failed');
             }
@@ -238,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Processing error:', error);
             showNotification(error.message || 'An error occurred', 'error');
             updateProcessStatus('Error', false);
+            updateDetectionSummary('Failed');
         } finally {
             loader.classList.add('hidden');
             processBtn.disabled = false;
@@ -248,8 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Download Handler
     // ========================================
 
-    downloadBtn.addEventListener('click', () => {
-        if (!processedUrl) return;
+    function triggerDownload() {
+        if (!processedUrl || !currentFile) return;
 
         const link = document.createElement('a');
         link.href = processedUrl;
@@ -257,11 +276,24 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    downloadBtn.addEventListener('click', () => {
+        triggerDownload();
     });
 
+    if (compProcessed) {
+        compProcessed.addEventListener('error', () => {
+            showNotification('Processed image failed to load. Check server output or refresh.', 'error');
+            updateProcessStatus('Error', false);
+            updateDetectionSummary('Output load failed');
+        });
+    }
+
     function updateProcessStatus(text, processing) {
+        if (!processStatus) return;
         const statusDot = processStatus.querySelector('.status-dot');
-        const statusText = processStatus.lastChild;
+        const statusText = processStatus.querySelector('.status-text');
 
         if (statusText) statusText.textContent = text;
 
@@ -276,6 +308,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusDot.style.background = 'var(--text-muted)';
             }
         }
+    }
+
+    function updateDetectionSummary(text) {
+        if (!detectionSummary) return;
+        detectionSummary.textContent = text;
     }
 
     function showNotification(message, type = 'info') {

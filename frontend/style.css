@@ -495,12 +495,21 @@ main {
     gap: var(--spacing-xs);
     font-size: 0.6875rem;
     color: var(--text-muted);
+    margin-bottom: var(--spacing-md);
 }
 
 .status-dot {
     width: 6px;
     height: 6px;
     background: var(--success);
+}
+
+.status-sep {
+    opacity: 0.5;
+}
+
+.status-meta {
+    color: var(--text-secondary);
 }
 
 .image-container {
