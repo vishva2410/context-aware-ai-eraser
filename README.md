@@ -30,6 +30,21 @@ Detect faces, license plates, and ID cards, then blur or erase based on your con
 
 ---
 
+## 🗺️ Flowchart
+```mermaid
+flowchart TD
+    A["Upload Image"] --> B["Select Context (Public/Private)"]
+    B --> C["Run Detection (Faces/Plates/IDs)"]
+    C --> D{"Context Rules"}
+    D -->|Public| E["Blur Plates + IDs"]
+    D -->|Private| F["Erase/Blur All Sensitive Regions"]
+    E --> G["Render Protected Image"]
+    F --> G
+    G --> H["Download Result"]
+```
+
+---
+
 ## 🎯 Privacy Modes
 - **Public**
   - Blur plates and IDs
@@ -79,9 +94,14 @@ http://127.0.0.1:5000
 - Frontend: redesigned monochrome interface
 - Backend: Flask API for uploads and processing
 
-Planned:
-- Advanced scene understanding (ViT/CLIP)
-- Video processing support
+---
+
+## 🧭 Future Goals
+- Advanced scene understanding with ViT/CLIP for richer context
+- Video processing pipeline with frame sampling + tracking
+- User-controlled sensitivity sliders per object type
+- Export presets for different sharing platforms
+- Optional batch processing for folders
 
 ---
 
