@@ -13,7 +13,7 @@ Detect faces, license plates, and ID cards, then blur or erase them based on you
 
 ---
 
-## ✨ Highlights
+##  Highlights
 - AI-assisted detection for **faces**, **license plates**, and **ID cards**
 - **Context-aware anonymization** (Public vs Private) for flexible privacy control
 - **Premium monochrome UI** with drag-and-drop upload and instant results
@@ -21,7 +21,7 @@ Detect faces, license plates, and ID cards, then blur or erase them based on you
 
 ---
 
-## 🧠 How It Works
+##  How It Works
 1. Upload an image in the web UI.
 2. Choose **Public** or **Private** context.
 3. The pipeline detects sensitive regions.
@@ -30,7 +30,7 @@ Detect faces, license plates, and ID cards, then blur or erase them based on you
 
 ---
 
-## 🗺️ Flowchart
+##  Flowchart
 ```mermaid
 flowchart TD
     A["Upload Image"] --> B["Select Context (Public/Private)"]
@@ -45,20 +45,20 @@ flowchart TD
 
 ---
 
-## 🎯 Privacy Modes
+##  Privacy Modes
 - **Public:** blur plates and IDs, preserve faces for usability
 - **Private:** aggressive anonymization (erase/blur all sensitive regions) for maximum privacy
 
 ---
 
-## 💡 Use Cases
+##  Use Cases
 - Sharing photos on social media without exposing sensitive data
 - Redacting IDs and plates before sending to clients or teams
 - Privacy-safe dataset previews for demos and presentations
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 - **Language:** Python 3.9+
 - **Backend:** Flask
 - **Frontend:** HTML5, CSS3, Vanilla JS
@@ -68,7 +68,7 @@ flowchart TD
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 ```bash
 git clone https://github.com/vishva2410/context-aware-ai-eraser.git
 cd context-aware-ai-eraser
@@ -92,14 +92,14 @@ http://127.0.0.1:5000
 
 ---
 
-## ✅ Project Status
+##  Project Status
 - Implemented: multi-object detection + context-aware anonymization
 - Frontend: redesigned monochrome interface
 - Backend: Flask API for uploads and processing
 
 ---
 
-## 🧭 Future Goals
+##  Future Goals
 - **Smart sharing protection:** if a photo is shared publicly or with unknown/unregistered recipients, automatically blur sensitive data such as account numbers, license plates, addresses, faces, and IDs.
 - Advanced scene understanding with ViT/CLIP for richer context
 - Video processing pipeline with frame sampling + tracking
@@ -109,7 +109,7 @@ http://127.0.0.1:5000
 
 ---
 
-## 👤 Author
+##  Author
 **Made by [Guduguntla Vishva Teja](https://github.com/vishva2410)**
 
 ---
