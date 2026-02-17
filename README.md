@@ -1,5 +1,5 @@
 #  Context-Aware AI Eraser 
-
+ 
 **Privacy-first image anonymization with a human-in-the-loop workflow.**  
 Detect faces, license plates, and ID cards, then blur or erase them based on your context.
 
