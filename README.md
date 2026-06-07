@@ -12,7 +12,7 @@ Detect faces, license plates, and ID cards, then blur or erase them based on you
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 ---
-
+ 
 ##  Highlights
 - AI-assisted detection for **faces**, **license plates**, and **ID cards**
 - **Context-aware anonymization** (Public vs Private) for flexible privacy control
