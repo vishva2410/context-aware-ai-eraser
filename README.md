@@ -13,7 +13,7 @@ Detect faces, license plates, and ID cards, then blur or erase them based on you
 
 ---
  
-##  Highlights
+##  Highlights 
 - AI-assisted detection for **faces**, **license plates**, and **ID cards**
 - **Context-aware anonymization** (Public vs Private) for flexible privacy control
 - **Premium monochrome UI** with drag-and-drop upload and instant results
