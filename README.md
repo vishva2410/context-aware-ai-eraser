@@ -3,7 +3,7 @@
 **Privacy-first image anonymization with a human-in-the-loop workflow.**   
 Detect faces, license plates, and ID cards, then blur or erase them based on your context.
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue) 
 ![Computer Vision](https://img.shields.io/badge/Computer%20Vision-OpenCV-green)
 ![YOLO](https://img.shields.io/badge/YOLOv8-Object%20Detection-orange)
 ![Frontend](https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-black) 
